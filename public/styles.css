@@ -11,6 +11,10 @@
   font-weight: 600;
 }
 
+#videoSelect, #videoUrl, #videoName {
+  font-size: 0.9rem;
+}
+
 @media (max-width: 640px) {
   #views {
     font-size: 3rem; /* Slightly smaller on mobile */
@@ -18,5 +22,8 @@
   }
   #viewIncrease {
     font-size: 1.25rem;
+  }
+  #videoSelect, #videoUrl, #videoName {
+    font-size: 0.85rem;
   }
 }
