@@ -6,9 +6,17 @@
   letter-spacing: -0.05rem; /* Tighten spacing for comma-separated numbers */
 }
 
+#viewIncrease {
+  font-size: 1.5rem; /* Smaller but noticeable */
+  font-weight: 600;
+}
+
 @media (max-width: 640px) {
   #views {
     font-size: 3rem; /* Slightly smaller on mobile */
     letter-spacing: -0.03rem;
+  }
+  #viewIncrease {
+    font-size: 1.25rem;
   }
 }
