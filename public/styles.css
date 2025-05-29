@@ -3,10 +3,12 @@
   font-size: 4rem; /* Extra large for visibility */
   font-weight: 800;
   line-height: 1.2;
+  letter-spacing: -0.05rem; /* Tighten spacing for comma-separated numbers */
 }
 
 @media (max-width: 640px) {
   #views {
     font-size: 3rem; /* Slightly smaller on mobile */
+    letter-spacing: -0.03rem;
   }
 }
