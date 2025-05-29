@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube View Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>YouTube Video View Tracker</h1>
+    <div class="input-section">
+      <label for="videoId">Enter YouTube Video ID:</label>
+      <input type="text" id="videoId" placeholder="e.g., Qq7mpb-hCBY">
+      <button id="startBtn">Start Tracking</button>
+    </div>
+    <div id="viewCount">View Count: <span id="views">0</span></div>
+    <div id="error" class="error"></div>
+    <div class="api-key-section">
+      <h2>Update API Key</h2>
+      <label for="apiKey">New API Key:</label>
+      <input type="text" id="apiKey" placeholder="Enter new API key">
+      <button id="updateKeyBtn">Update API Key</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
