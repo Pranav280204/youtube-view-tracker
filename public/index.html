@@ -4,25 +4,53 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YouTube View Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <div class="container">
-    <h1>YouTube Video View Tracker</h1>
-    <div class="input-section">
-      <label for="videoId">Enter YouTube Video ID:</label>
-      <input type="text" id="videoId" placeholder="e.g., Qq7mpb-hCBY">
-      <button id="startBtn">Start Tracking</button>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  <header class="bg-blue-600 text-white py-4 shadow-md">
+    <div class="container mx-auto px-4">
+      <h1 class="text-3xl font-bold">YouTube View Tracker</h1>
+      <p class="text-sm">Track real-time views for any YouTube video</p>
     </div>
-    <div id="viewCount">View Count: <span id="views">0</span></div>
-    <div id="error" class="error"></div>
-    <div class="api-key-section">
-      <h2>Update API Key</h2>
-      <label for="apiKey">New API Key:</label>
-      <input type="text" id="apiKey" placeholder="Enter new API key">
-      <button id="updateKeyBtn">Update API Key</button>
+  </header>
+  <main class="container mx-auto px-4 py-8 flex-grow">
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <section class="mb-6">
+        <h2 class="text-xl font-semibold mb-4">Track Video Views</h2>
+        <div class="flex flex-col space-y-4">
+          <input type="text" id="videoId" placeholder="Enter YouTube Video ID (e.g., dQw4w9WgXcQ)" class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button id="startBtn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition">Start Tracking</button>
+        </div>
+        <p id="quotaWarning" class="text-sm text-yellow-600 mt-2">Note: Fetching views every second may quickly exhaust the YouTube API quota (10,000 requests/day).</p>
+      </section>
+      <section class="mb-6">
+        <h2 class="text-xl font-semibold mb-4">Current View Count</h2>
+        <div id="viewCount" class="text-center">
+          <span id="views" class="text-6xl font-bold text-blue-600">0</span>
+          <div id="loading" class="hidden mt-4">
+            <svg class="animate-spin h-8 w-8 text-blue-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+        </div>
+        <div id="error" class="text-red-500 text-center mt-4 hidden"></div>
+      </section>
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Update API Key</h2>
+        <div class="flex flex-col space-y-4">
+          <input type="text" id="apiKey" placeholder="Enter new API key" class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button id="updateKeyBtn" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 transition">Update API Key</button>
+        </div>
+      </section>
     </div>
-  </div>
+  </main>
+  <footer class="bg-gray-800 text-white py-4">
+    <div class="container mx-auto px-4 text-center">
+      <p>&copy; 2025 YouTube View Tracker. Built with love by Pranav.</p>
+    </div>
+  </footer>
   <script src="script.js"></script>
 </body>
 </html>
