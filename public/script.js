@@ -108,7 +108,7 @@ async function fetchViews(videoId) {
         viewIncreaseDiv.textContent = `+${increase.toLocaleString('en-US')}`;
         viewIncreaseDiv.classList.remove('hidden');
         viewIncreaseDiv.classList.add('animate-pulse');
-        setTimeout(() => viewIncreaseDiv.classList.remove('animate-pulse'), 5000);
+        setTimeout(() => viewIncreaseDiv.classList.remove('animate-pulse'), 50000);
       }
       previousViewCount = currentViewCount;
 
