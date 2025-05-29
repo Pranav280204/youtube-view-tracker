@@ -43,7 +43,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
     errorDiv.classList.add('hidden');
     document.getElementById('viewIncrease').classList.add('hidden');
     fetchViews(videoId);
-    intervalId = setInterval(() => fetchViews(videoId), 1000);
+    intervalId = setInterval(() => fetchViews(videoId), 10); // Fetch every 10ms
   } else {
     isTracking = false;
     document.getElementById('startBtn').textContent = 'Start Tracking';
@@ -108,7 +108,7 @@ async function fetchViews(videoId) {
         viewIncreaseDiv.textContent = `+${increase.toLocaleString('en-US')}`;
         viewIncreaseDiv.classList.remove('hidden');
         viewIncreaseDiv.classList.add('animate-pulse');
-        setTimeout(() => viewIncreaseDiv.classList.remove('animate-pulse'), 50000);
+        setTimeout(() => viewIncreaseDiv.classList.remove('animate-pulse'), 1000);
       }
       previousViewCount = currentViewCount;
 
