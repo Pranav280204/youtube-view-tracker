@@ -22,14 +22,85 @@ function extractVideoId(url) {
   }
 }
 
+function loadVideos() {
+  const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+  const select = document.getElementById('videoSelect');
+  select.innerHTML = '<option value="">Select a video</option>';
+  videos.forEach(video => {
+    const option = document.createElement('option');
+    option.value = video.url;
+    option.textContent = video.name;
+    select.appendChild(option);
+  });
+}
+
+async function fetchVideoTitle(videoId) {
+  try {
+    const response = await fetch(`/api/title/${videoId}`);
+    const data = await response.json();
+    if (response.ok) {
+      return data.title;
+    }
+    return 'Untitled Video';
+  } catch (error) {
+    return 'Untitled Video';
+  }
+}
+
+document.getElementById('addVideoBtn').addEventListener('click', async () => {
+  const url = document.getElementById('videoUrl').value.trim();
+  let name = document.getElementById('videoName').value.trim();
+  const errorDiv = document.getElementById('error');
+  
+  const videoId = extractVideoId(url);
+  if (!videoId) {
+    errorDiv.textContent = 'Please enter a valid YouTube video URL.';
+    errorDiv.classList.remove('hidden');
+    return;
+  }
+  if (!name) {
+    name = await fetchVideoTitle(videoId);
+  }
+
+  const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+  if (!videos.some(v => v.url === url)) {
+    videos.push({ url, name });
+    localStorage.setItem('videos', JSON.stringify(videos));
+    loadVideos();
+    document.getElementById('videoUrl').value = '';
+    document.getElementById('videoName').value = '';
+    errorDiv.textContent = 'Video added successfully!';
+    errorDiv.classList.remove('text-red-500', 'hidden');
+    errorDiv.classList.add('text-green-500');
+  } else {
+    errorDiv.textContent = 'Video URL already exists.';
+    errorDiv.classList.remove('hidden');
+    errorDiv.classList.add('text-red-500');
+  }
+});
+
+document.getElementById('videoSelect').addEventListener('change', () => {
+  if (isTracking) {
+    isTracking = false;
+    document.getElementById('startBtn').textContent = 'Start Tracking';
+    document.getElementById('startBtn').classList.remove('bg-red-500', 'hover:bg-red-600');
+    document.getElementById('startBtn').classList.add('bg-blue-500', 'hover:bg-blue-600');
+    clearInterval(intervalId);
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('viewIncrease').classList.add('hidden');
+  }
+  document.getElementById('views').textContent = '0';
+  previousViewCount = null;
+});
+
 document.getElementById('startBtn').addEventListener('click', () => {
-  const input = document.getElementById('videoId').value.trim();
+  const url = document.getElementById('videoSelect').value;
   const errorDiv = document.getElementById('error');
   const loadingDiv = document.getElementById('loading');
   
-  const videoId = extractVideoId(input);
+  const videoId = extractVideoId(url);
   if (!videoId) {
-    errorDiv.textContent = 'Please enter a valid YouTube video URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ).';
+    errorDiv.textContent = 'Please select a video from the dropdown.';
     errorDiv.classList.remove('hidden');
     return;
   }
@@ -138,3 +209,6 @@ async function fetchViews(videoId) {
     viewIncreaseDiv.classList.add('hidden');
   }
 }
+
+// Load videos on page load
+document.addEventListener('DOMContentLoaded', loadVideos);
