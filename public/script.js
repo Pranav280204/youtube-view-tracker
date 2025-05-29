@@ -1,13 +1,38 @@
 let isTracking = false;
 let intervalId = null;
 
+function extractVideoId(url) {
+  try {
+    const urlObj = new URL(url);
+    let videoId = null;
+
+    // Handle standard YouTube URLs (e.g., https://www.youtube.com/watch?v=VIDEO_ID)
+    if (urlObj.hostname.includes('youtube.com') && urlObj.searchParams.has('v')) {
+      videoId = urlObj.searchParams.get('v');
+    }
+    // Handle shortened YouTube URLs (e.g., https://youtu.be/VIDEO_ID)
+    else if (urlObj.hostname.includes('youtu.be')) {
+      videoId = urlObj.pathname.split('/')[1];
+    }
+
+    // Validate video ID (11 characters, alphanumeric with specific symbols)
+    if (videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+      return videoId;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
+
 document.getElementById('startBtn').addEventListener('click', () => {
-  const videoId = document.getElementById('videoId').value.trim();
+  const input = document.getElementById('videoId').value.trim();
   const errorDiv = document.getElementById('error');
   const loadingDiv = document.getElementById('loading');
   
+  const videoId = extractVideoId(input);
   if (!videoId) {
-    errorDiv.textContent = 'Please enter a valid YouTube Video ID.';
+    errorDiv.textContent = 'Please enter a valid YouTube video URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ).';
     errorDiv.classList.remove('hidden');
     return;
   }
@@ -74,7 +99,8 @@ async function fetchViews(videoId) {
     const response = await fetch(`/api/views/${videoId}`);
     const data = await response.json();
     if (response.ok) {
-      viewsSpan.textContent = data.viewCount;
+      // Format view count with commas
+      viewsSpan.textContent = parseInt(data.viewCount).toLocaleString('en-US');
       loadingDiv.classList.add('hidden');
     } else {
       errorDiv.textContent = data.error;
