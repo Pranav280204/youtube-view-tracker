@@ -1,21 +1,18 @@
 let isTracking = false;
 let intervalId = null;
+let previousViewCount = null;
 
 function extractVideoId(url) {
   try {
     const urlObj = new URL(url);
     let videoId = null;
 
-    // Handle standard YouTube URLs (e.g., https://www.youtube.com/watch?v=VIDEO_ID)
     if (urlObj.hostname.includes('youtube.com') && urlObj.searchParams.has('v')) {
       videoId = urlObj.searchParams.get('v');
-    }
-    // Handle shortened YouTube URLs (e.g., https://youtu.be/VIDEO_ID)
-    else if (urlObj.hostname.includes('youtu.be')) {
+    } else if (urlObj.hostname.includes('youtu.be')) {
       videoId = urlObj.pathname.split('/')[1];
     }
 
-    // Validate video ID (11 characters, alphanumeric with specific symbols)
     if (videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
       return videoId;
     }
@@ -39,12 +36,14 @@ document.getElementById('startBtn').addEventListener('click', () => {
 
   if (!isTracking) {
     isTracking = true;
+    previousViewCount = null;
     document.getElementById('startBtn').textContent = 'Stop Tracking';
     document.getElementById('startBtn').classList.remove('bg-blue-500', 'hover:bg-blue-600');
     document.getElementById('startBtn').classList.add('bg-red-500', 'hover:bg-red-600');
     errorDiv.classList.add('hidden');
+    document.getElementById('viewIncrease').classList.add('hidden');
     fetchViews(videoId);
-    intervalId = setInterval(() => fetchViews(videoId), 1000); // Fetch every 1 second
+    intervalId = setInterval(() => fetchViews(videoId), 1000);
   } else {
     isTracking = false;
     document.getElementById('startBtn').textContent = 'Start Tracking';
@@ -52,6 +51,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
     document.getElementById('startBtn').classList.add('bg-blue-500', 'hover:bg-blue-600');
     clearInterval(intervalId);
     loadingDiv.classList.add('hidden');
+    document.getElementById('viewIncrease').classList.add('hidden');
   }
 });
 
@@ -81,7 +81,7 @@ document.getElementById('updateKeyBtn').addEventListener('click', async () => {
       errorDiv.classList.add('text-red-500');
     }
   } catch (error) {
-    errorDiv.textContent = 'Error updating API key: ' + error.message;
+    errorDiv.textContent = 'Error adding API key: ' + error.message;
     errorDiv.classList.remove('hidden');
     errorDiv.classList.add('text-red-500');
   }
@@ -90,6 +90,7 @@ document.getElementById('updateKeyBtn').addEventListener('click', async () => {
 async function fetchViews(videoId) {
   const errorDiv = document.getElementById('error');
   const viewsSpan = document.getElementById('views');
+  const viewIncreaseDiv = document.getElementById('viewIncrease');
   const loadingDiv = document.getElementById('loading');
   
   loadingDiv.classList.remove('hidden');
@@ -99,19 +100,30 @@ async function fetchViews(videoId) {
     const response = await fetch(`/api/views/${videoId}`);
     const data = await response.json();
     if (response.ok) {
-      // Format view count with commas
-      viewsSpan.textContent = parseInt(data.viewCount).toLocaleString('en-US');
+      const currentViewCount = parseInt(data.viewCount);
+      viewsSpan.textContent = currentViewCount.toLocaleString('en-US');
+
+      if (previousViewCount !== null && currentViewCount > previousViewCount) {
+        const increase = currentViewCount - previousViewCount;
+        viewIncreaseDiv.textContent = `+${increase.toLocaleString('en-US')}`;
+        viewIncreaseDiv.classList.remove('hidden');
+        viewIncreaseDiv.classList.add('animate-pulse');
+        setTimeout(() => viewIncreaseDiv.classList.remove('animate-pulse'), 1000);
+      }
+      previousViewCount = currentViewCount;
+
       loadingDiv.classList.add('hidden');
     } else {
       errorDiv.textContent = data.error;
       errorDiv.classList.remove('hidden');
       loadingDiv.classList.add('hidden');
-      if (data.error.includes('Quota exceeded')) {
+      if (data.error.includes('Quota exceeded') || data.error.includes('All API keys')) {
         isTracking = false;
         document.getElementById('startBtn').textContent = 'Start Tracking';
         document.getElementById('startBtn').classList.remove('bg-red-500', 'hover:bg-red-600');
         document.getElementById('startBtn').classList.add('bg-blue-500', 'hover:bg-blue-600');
         clearInterval(intervalId);
+        viewIncreaseDiv.classList.add('hidden');
       }
     }
   } catch (error) {
@@ -123,5 +135,6 @@ async function fetchViews(videoId) {
     document.getElementById('startBtn').classList.remove('bg-red-500', 'hover:bg-red-600');
     document.getElementById('startBtn').classList.add('bg-blue-500', 'hover:bg-blue-600');
     clearInterval(intervalId);
+    viewIncreaseDiv.classList.add('hidden');
   }
 }
