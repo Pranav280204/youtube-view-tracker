@@ -114,7 +114,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
     errorDiv.classList.add('hidden');
     document.getElementById('viewIncrease').classList.add('hidden');
     fetchViews(videoId);
-    intervalId = setInterval(() => fetchViews(videoId), 100); // Fetch every 10ms
+    intervalId = setInterval(() => fetchViews(videoId), 10); // Fetch every 10ms
   } else {
     isTracking = false;
     document.getElementById('startBtn').textContent = 'Start Tracking';
